@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function QuestionForm(props) {
+function QuestionForm({ onAddQuestion }) {
   const [formData, setFormData] = useState({
     prompt: "",
     answer1: "",
@@ -28,9 +28,11 @@ function QuestionForm(props) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
-    }).then(() => {
-      // no local state update needed; list will refetch when navigating back
-    });
+    })
+      .then((r) => r.json())
+      .then((created) => {
+        if (onAddQuestion) onAddQuestion(created);
+      });
   }
 
   return (
