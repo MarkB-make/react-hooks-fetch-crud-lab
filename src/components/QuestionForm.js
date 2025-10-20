@@ -29,10 +29,16 @@ function QuestionForm({ onAddQuestion }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
-      .then((r) => r.json())
+      .then((r) => {
+        if (r.ok) {
+          return r.json();
+        }
+        throw new Error('Network response was not ok');
+      })
       .then((created) => {
         if (onAddQuestion) onAddQuestion(created);
-      });
+      })
+      .catch((error) => console.error("Error creating question:", error));
   }
 
   return (

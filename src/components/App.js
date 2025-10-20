@@ -10,8 +10,14 @@ function App() {
   // initial load of questions
   useEffect(() => {
     fetch("http://localhost:4000/questions")
-      .then((r) => r.json())
-      .then((data) => setQuestions(data));
+      .then((r) => {
+        if (r.ok) {
+          return r.json();
+        }
+        throw new Error('Network response was not ok');
+      })
+      .then((data) => setQuestions(data))
+      .catch((error) => console.error("Error fetching questions:", error));
   }, []);
 
   function handleAddQuestion(newQuestion) {
@@ -19,26 +25,36 @@ function App() {
   }
 
   function handleDeleteQuestion(id) {
-    // update state after server delete
-    fetch(`http://localhost:4000/questions/${id}`, { method: "DELETE" }).then(() => {
-      setQuestions((qs) => qs.filter((q) => q.id !== id));
-    });
+    fetch(`http://localhost:4000/questions/${id}`, { method: "DELETE" })
+      .then((r) => {
+        if (r.ok) {
+          setQuestions((qs) => qs.filter((q) => q.id !== id));
+        } else {
+          throw new Error('Network response was not ok');
+        }
+      })
+      .catch((error) => console.error("Error deleting question:", error));
   }
 
   function handleUpdateQuestion(id, correctIndex) {
-    // optimistic update
     setQuestions((qs) => qs.map((q) => (q.id === id ? { ...q, correctIndex } : q)));
     fetch(`http://localhost:4000/questions/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ correctIndex }),
     })
-      .then((r) => r.json())
+      .then((r) => {
+        if (r.ok) {
+          return r.json();
+        }
+        throw new Error('Network response was not ok');
+      })
       .then((updated) => {
         setQuestions((qs) =>
           qs.map((q) => (q.id === id ? { ...q, correctIndex: updated.correctIndex } : q))
         );
-      });
+      })
+      .catch((error) => console.error("Error updating question:", error));
   }
 
   return (
