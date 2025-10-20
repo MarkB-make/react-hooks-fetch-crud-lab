@@ -6,7 +6,6 @@ import {
   screen,
   waitForElementToBeRemoved,
 } from "@testing-library/react";
-import "@testing-library/jest-dom/extend-expect";
 import { server } from "../mocks/server";
 
 import App from "../components/App";
@@ -20,8 +19,8 @@ test("displays question prompts after fetching", async () => {
 
   fireEvent.click(screen.queryByText(/View Questions/));
 
-  expect(await screen.findByText(/lorem testum 1/g)).toBeInTheDocument();
-  expect(await screen.findByText(/lorem testum 2/g)).toBeInTheDocument();
+  expect(await screen.findByText(/lorem testum 1/g)).toBeTruthy();
+  expect(await screen.findByText(/lorem testum 2/g)).toBeTruthy();
 });
 
 test("creates a new question when the form is submitted", async () => {
@@ -53,8 +52,8 @@ test("creates a new question when the form is submitted", async () => {
   // view questions
   fireEvent.click(screen.queryByText(/View Questions/));
 
-  expect(await screen.findByText(/Test Prompt/g)).toBeInTheDocument();
-  expect(await screen.findByText(/lorem testum 1/g)).toBeInTheDocument();
+  expect(await screen.findByText(/Test Prompt/g)).toBeTruthy();
+  expect(await screen.findByText(/lorem testum 1/g)).toBeTruthy();
 });
 
 test("deletes the question when the delete button is clicked", async () => {
@@ -72,7 +71,7 @@ test("deletes the question when the delete button is clicked", async () => {
 
   await screen.findByText(/lorem testum 2/g);
 
-  expect(screen.queryByText(/lorem testum 1/g)).not.toBeInTheDocument();
+  expect(screen.queryByText(/lorem testum 1/g)).toBeNull();
 });
 
 test("updates the answer when the dropdown is changed", async () => {
